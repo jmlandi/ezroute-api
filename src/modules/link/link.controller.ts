@@ -11,6 +11,7 @@ export class LinkController {
   @Post()
   async createLink(@Body() body: any, @Req() req: any): Promise<any> {
     const { userId, workspaceId, originalUrl, searchParams = {}, isActive = true } = body;
+    // return `endpoint hitted, userId: ${userId}, WorkspaceId: ${workspaceId}\noriginalUrl: ${originalUrl}\nsearchParams: ${searchParams}\nisActive: ${isActive}`;
     return this.linkService.createLink(userId, workspaceId, originalUrl, searchParams, isActive);
   }
 }

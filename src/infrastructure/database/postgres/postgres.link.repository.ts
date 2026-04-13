@@ -1,14 +1,16 @@
+import { Injectable } from '@nestjs/common';
 import { ILinkRepository } from "../../../domain/repositories/link.repository.interface";
 import { createLink } from "../../../domain/types/link.types";
 import { PostgresService } from "./postgres.service";
 
+@Injectable()
 export class PostgresLinkRepository implements ILinkRepository {
   constructor(private readonly postgresService: PostgresService) { }
 
   async create(link: createLink): Promise<any> {
     const query = `
       INSERT INTO
-        links_metadata (short_code, original_url, workspace_id, user_id, search_params, created_at)
+        links_metadata (short_code, original_url, workspace_id, created_by, search_params, created_at)
       VALUES ($1, $2, $3, $4, $5, $6)
     `;
     const params = [link.shortCode, link.originalUrl, link.workspaceId, link.userId, link.searchParams, link.createdAt];

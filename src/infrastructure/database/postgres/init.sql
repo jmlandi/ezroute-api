@@ -1,4 +1,4 @@
--- USERS
+-- Tables creation
 CREATE TABLE IF NOT EXISTS "users" (
   "id" uuid PRIMARY KEY,
   "email" varchar UNIQUE NOT NULL,
@@ -16,16 +16,14 @@ CREATE TABLE IF NOT EXISTS "users" (
   "plan_last_paid_at" timestamp
 );
 
--- PLANS
 CREATE TABLE IF NOT EXISTS "plans" (
   "tier" varchar PRIMARY KEY,
-  "price" float NOT NULL,
-  "max_workspaces" int NOT NULL,
-  "max_members_per_workspace" int NOT NULL,
-  "max_links_per_workspace" int NOT NULL
+  "price" float not null,
+  "max_workspaces" int not null,
+  "max_members_per_workspace" int not null,
+  "max_links_per_workspace" int not null
 );
 
--- WORKSPACES
 CREATE TABLE IF NOT EXISTS "workspaces" (
   "id" uuid PRIMARY KEY,
   "owner_id" uuid NOT NULL,
@@ -35,17 +33,14 @@ CREATE TABLE IF NOT EXISTS "workspaces" (
   "updated_at" timestamp
 );
 
--- WORKSPACE MEMBERS
 CREATE TABLE IF NOT EXISTS "workspace_members" (
   "id" uuid PRIMARY KEY,
   "workspace_id" uuid NOT NULL,
   "user_id" uuid NOT NULL,
   "role" varchar,
-  "created_at" timestamp,
-  UNIQUE ("workspace_id", "user_id")
+  "created_at" timestamp
 );
 
--- INVITES
 CREATE TABLE IF NOT EXISTS "invites" (
   "id" uuid PRIMARY KEY,
   "workspace_id" uuid NOT NULL,
@@ -56,9 +51,8 @@ CREATE TABLE IF NOT EXISTS "invites" (
   "created_at" timestamp
 );
 
--- LINKS METADATA
 CREATE TABLE IF NOT EXISTS "links_metadata" (
-  "id" uuid PRIMARY KEY,
+  "id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   "workspace_id" uuid NOT NULL,
   "created_by" uuid NOT NULL,
   "short_code" varchar UNIQUE NOT NULL,
@@ -68,92 +62,29 @@ CREATE TABLE IF NOT EXISTS "links_metadata" (
   "created_at" timestamp
 );
 
--- INDEXES
-CREATE INDEX IF NOT EXISTS "idx_links_workspace" ON "links_metadata" ("workspace_id");
-CREATE INDEX IF NOT EXISTS "idx_links_created_by" ON "links_metadata" ("created_by");
+-- Table relationship
+CREATE UNIQUE INDEX ON "workspace_members" ("workspace_id", "user_id");
 
--- FOREIGN KEYS (safe add)
-DO $$
-BEGIN
-  -- workspaces.owner_id → users.id
-  IF NOT EXISTS (
-    SELECT 1 FROM information_schema.table_constraints
-    WHERE constraint_name = 'workspaces_owner_id_fkey'
-  ) THEN
-    ALTER TABLE "workspaces"
-    ADD CONSTRAINT "workspaces_owner_id_fkey"
-    FOREIGN KEY ("owner_id") REFERENCES "users" ("id")
-    DEFERRABLE INITIALLY IMMEDIATE;
-  END IF;
+CREATE INDEX ON "links_metadata" ("workspace_id");
 
-  -- workspace_members.workspace_id → workspaces.id
-  IF NOT EXISTS (
-    SELECT 1 FROM information_schema.table_constraints
-    WHERE constraint_name = 'workspace_members_workspace_id_fkey'
-  ) THEN
-    ALTER TABLE "workspace_members"
-    ADD CONSTRAINT "workspace_members_workspace_id_fkey"
-    FOREIGN KEY ("workspace_id") REFERENCES "workspaces" ("id")
-    DEFERRABLE INITIALLY IMMEDIATE;
-  END IF;
+CREATE INDEX ON "links_metadata" ("created_by");
 
-  -- workspace_members.user_id → users.id
-  IF NOT EXISTS (
-    SELECT 1 FROM information_schema.table_constraints
-    WHERE constraint_name = 'workspace_members_user_id_fkey'
-  ) THEN
-    ALTER TABLE "workspace_members"
-    ADD CONSTRAINT "workspace_members_user_id_fkey"
-    FOREIGN KEY ("user_id") REFERENCES "users" ("id")
-    DEFERRABLE INITIALLY IMMEDIATE;
-  END IF;
+ALTER TABLE "workspaces" ADD FOREIGN KEY ("owner_id") REFERENCES "users" ("id") DEFERRABLE INITIALLY IMMEDIATE;
 
-  -- invites.workspace_id → workspaces.id
-  IF NOT EXISTS (
-    SELECT 1 FROM information_schema.table_constraints
-    WHERE constraint_name = 'invites_workspace_id_fkey'
-  ) THEN
-    ALTER TABLE "invites"
-    ADD CONSTRAINT "invites_workspace_id_fkey"
-    FOREIGN KEY ("workspace_id") REFERENCES "workspaces" ("id")
-    DEFERRABLE INITIALLY IMMEDIATE;
-  END IF;
+ALTER TABLE "workspace_members" ADD FOREIGN KEY ("workspace_id") REFERENCES "workspaces" ("id") DEFERRABLE INITIALLY IMMEDIATE;
 
-  -- links_metadata.workspace_id → workspaces.id
-  IF NOT EXISTS (
-    SELECT 1 FROM information_schema.table_constraints
-    WHERE constraint_name = 'links_metadata_workspace_id_fkey'
-  ) THEN
-    ALTER TABLE "links_metadata"
-    ADD CONSTRAINT "links_metadata_workspace_id_fkey"
-    FOREIGN KEY ("workspace_id") REFERENCES "workspaces" ("id")
-    DEFERRABLE INITIALLY IMMEDIATE;
-  END IF;
+ALTER TABLE "workspace_members" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id") DEFERRABLE INITIALLY IMMEDIATE;
 
-  -- links_metadata.created_by → users.id
-  IF NOT EXISTS (
-    SELECT 1 FROM information_schema.table_constraints
-    WHERE constraint_name = 'links_metadata_created_by_fkey'
-  ) THEN
-    ALTER TABLE "links_metadata"
-    ADD CONSTRAINT "links_metadata_created_by_fkey"
-    FOREIGN KEY ("created_by") REFERENCES "users" ("id")
-    DEFERRABLE INITIALLY IMMEDIATE;
-  END IF;
+ALTER TABLE "invites" ADD FOREIGN KEY ("workspace_id") REFERENCES "workspaces" ("id") DEFERRABLE INITIALLY IMMEDIATE;
 
-  -- users.plan_tier → plans.tier
-  IF NOT EXISTS (
-    SELECT 1 FROM information_schema.table_constraints
-    WHERE constraint_name = 'users_plan_tier_fkey'
-  ) THEN
-    ALTER TABLE "users"
-    ADD CONSTRAINT "users_plan_tier_fkey"
-    FOREIGN KEY ("plan_tier") REFERENCES "plans" ("tier")
-    DEFERRABLE INITIALLY IMMEDIATE;
-  END IF;
-END $$;
+ALTER TABLE "links_metadata" ADD FOREIGN KEY ("workspace_id") REFERENCES "workspaces" ("id") DEFERRABLE INITIALLY IMMEDIATE;
 
--- SEED PLANS (idempotent)
+ALTER TABLE "links_metadata" ADD FOREIGN KEY ("created_by") REFERENCES "users" ("id") DEFERRABLE INITIALLY IMMEDIATE;
+
+ALTER TABLE "users" ADD FOREIGN KEY ("plan_tier") REFERENCES "plans" ("tier") DEFERRABLE INITIALLY IMMEDIATE;
+
+
+-- Indepotent insert
 INSERT INTO "plans" ("tier", "price", "max_workspaces", "max_members_per_workspace", "max_links_per_workspace")
 SELECT * FROM (
   VALUES
@@ -165,3 +96,4 @@ SELECT * FROM (
 WHERE NOT EXISTS (
   SELECT 1 FROM "plans" p WHERE p."tier" = new_plans."tier"
 );
+

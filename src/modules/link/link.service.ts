@@ -40,13 +40,15 @@ export class LinkService {
     // Create link object
     const link: createLink = {
       shortCode,
-      originalUrl,
-      workspaceId,
-      userId,
+      originalUrl: originalUrl.toString(),
+      workspaceId: workspaceId.toString(),
+      userId: userId.toString(),
       searchParams,
       createdAt: new Date(),
       isActive
     }
+
+    console.log(link);
 
     // Persist to Postgres (Core Business Source of truth / Metadata)
     await this.postgresLinkRepo.create(link);

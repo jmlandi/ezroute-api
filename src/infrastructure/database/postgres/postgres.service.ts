@@ -9,11 +9,11 @@ export class PostgresService implements OnModuleInit, OnModuleDestroy {
     private pool: Pool;
 
     constructor() {
-        this.pool = new Pool({
+     this.pool = new Pool({
             connectionString: process.env.DATABASE_URL,
-            ssl: process.env.NODE_ENV === 'production'
-                ? { rejectUnauthorized: false }
-                : false,
+            ssl: process?.env?.NODE_ENV === 'production'
+              ? { rejectUnauthorized: false }
+              : undefined,
         });
     }
 
@@ -39,7 +39,7 @@ export class PostgresService implements OnModuleInit, OnModuleDestroy {
 
     private async runInitSQL() {
         try {
-            const filePath = path.join(process.cwd(), './init.sql');
+            const filePath = path.join(process.cwd(), './src/infrastructure/database/postgres/init.sql');
             const sql = fs.readFileSync(filePath, 'utf-8');
 
             this.logger.log('Running init.sql...');
