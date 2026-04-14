@@ -27,7 +27,6 @@ export class RedirectController {
     };
 
     const originalUrl = await this.redirectService.resolveShortCode(shortCode, trackingData);
-    console.log(`Redirecting short code ${shortCode} to ${originalUrl}`);
     return res.redirect(302, originalUrl);
   }
 
