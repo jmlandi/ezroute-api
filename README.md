@@ -96,3 +96,7 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+
+Interactive Swagger UI: http://localhost:3001/api/docs
+OpenAPI JSON: http://localhost:3001/api/docs-json
+ReDoc (alternative): http://localhost:3001/api/redoc

@@ -1,17 +1,31 @@
-import { Controller, Post, Body, Req } from '@nestjs/common';
+import { Controller, HttpCode, HttpStatus, Post, Body, Request, UseGuards } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { CreateLinkDto } from './link.dto';
+import { AuthGuard } from '../auth/auth.guard';
 import { LinkService } from './link.service';
 
+@ApiTags('Link')
 @Controller('api/links')
 export class LinkController {
-  constructor(private readonly linkService: LinkService) { }
+  constructor(private readonly linkService: LinkService) {}
 
-  /**
-   * Endpoint for generating new shortened links.
-   */
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Create a new shortened link' })
+  @ApiResponse({ status: 201, description: 'Link created successfully with short code' })
+  @ApiResponse({ status: 400, description: 'Invalid request' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @UseGuards(AuthGuard)
+  @HttpCode(HttpStatus.CREATED)
   @Post()
-  async createLink(@Body() body: any, @Req() req: any): Promise<any> {
-    const { userId, workspaceId, originalUrl, searchParams = {}, isActive = true } = body;
-    // return `endpoint hitted, userId: ${userId}, WorkspaceId: ${workspaceId}\noriginalUrl: ${originalUrl}\nsearchParams: ${searchParams}\nisActive: ${isActive}`;
-    return this.linkService.createLink(userId, workspaceId, originalUrl, searchParams, isActive);
+  async createLink(@Request() request: any, @Body() createLinkDto: CreateLinkDto) {
+    const userId = request.user?.sub;
+    return this.linkService.createLink(
+      userId,
+      createLinkDto.workspaceId,
+      createLinkDto.originalUrl,
+      createLinkDto.searchParams || {},
+      createLinkDto.isActive !== false,
+    );
   }
+
 }

@@ -1,13 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { CassandraService } from './cassandra.service';
-import { createLink, insertClick } from '../../../domain/types/link.types';
 import { ILinkCassandraRepository } from '../../../domain/repositories/linkCassandra.repository.interface';
 
 @Injectable()
 export class CassandraLinkRepository implements ILinkCassandraRepository {
   constructor(private readonly cassandraService: CassandraService) { }
 
-  async create(link: createLink): Promise<any> {
+  async create(link: any): Promise<any> {
     const query = 'INSERT INTO ezroute.links_by_code ("shortCode", "originalUrl", "workspaceId", "isActive", "createdAt") VALUES (?, ?, ?, ?, ?)';
     const params = [
       link.shortCode,
@@ -26,7 +25,7 @@ export class CassandraLinkRepository implements ILinkCassandraRepository {
     return result.first();
   }
 
-  async insertClick(click: insertClick) {
+  async insertClick(click: any) {
     const query = 'INSERT INTO ezroute.clicks_by_link ("shortCode", "referrer", "userAgent", "ip", "eventTime") VALUES (?, ?, ?, ?, ?)';
     const params = [
       click.shortCode,

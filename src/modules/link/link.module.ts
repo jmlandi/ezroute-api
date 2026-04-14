@@ -9,7 +9,7 @@ import { CassandraLinkRepository } from '../../infrastructure/database/cassandra
   providers: [
     LinkService,
     PostgresLinkRepository,
-    CassandraLinkRepository
+    CassandraLinkRepository,
   ],
 })
-export class LinkModule { }
+export class LinkModule {}
