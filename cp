@@ -1,0 +1,1 @@
+JWT_TOKEN=oj13go1u25guo12g5o12jb5oj .env

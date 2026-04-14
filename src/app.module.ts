@@ -5,6 +5,9 @@ import { PostgresModule } from './infrastructure/database/postgres/postgres.modu
 import { CassandraModule } from './infrastructure/database/cassandra/cassandra.module';
 import { LinkModule } from './modules/link/link.module';
 import { RedirectModule } from './modules/redirect/redirect.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { UserModule } from './modules/user/user.module';
+import { WorkspaceModule } from './modules/workspace/workspace.module';
 
 @Module({
   imports: [
@@ -12,8 +15,11 @@ import { RedirectModule } from './modules/redirect/redirect.module';
     RedisModule,
     PostgresModule,
     CassandraModule,
+    UserModule,
     LinkModule,
-    RedirectModule
+    RedirectModule,
+    AuthModule,
+    WorkspaceModule
   ],
 })
 export class AppModule {}
