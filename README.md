@@ -1,102 +1,301 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# EZRoute API [In Development]
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A high-performance, enterprise-grade URL shortening and link management platform built with NestJS. EZRoute provides users with powerful tools to create, manage, and track shortened links across workspaces with comprehensive analytics and CRM integration.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Overview
 
-## Description
+EZRoute is a multi-tenant SaaS platform that enables users to:
+- Create and manage shortened URLs with custom UTM parameters
+- Organize links across multiple workspaces
+- Invite team members and manage permissions
+- Track link performance through Amplitude analytics
+- Engage users via Braze CRM integration
+- Scale to 100M+ URL generations per day with sub-millisecond latency
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Key Features
 
-## Project setup
+### Authentication & User Management
+- Multi-method authentication (email/password, user handle)
+- Self-service sign-up with email verification
+- Password recovery via secure email links
+- Profile management (picture, handle, credentials)
+- Account deletion with data cleanup
 
-```bash
-$ npm install
+### Workspace Management
+- Multi-workspace support with workspace-level ownership
+- Team member invitations via links or email
+- Role-based workspace access control
+- Workspace-specific link and member quotas
+
+### Subscription Plans
+Support for flexible tier-based plans:
+
+| Feature | Tier 1 | Tier 2 | Tier 3 | Tier 4 |
+|---------|--------|--------|--------|--------|
+| Workspaces | 1 | 3 | 6 | 12 |
+| Members/Workspace | 3 | 5 | 10 | 20 |
+| Links/Workspace | 15 | 30 | 60 | 120 |
+
+### Link Management
+- Create shortened URLs with alphanumeric characters (a-z, A-Z, 0-9)
+- UTM parameter configuration at creation time
+- Plan-based rate limiting and quotas
+- Long-term retention (10-year minimum storage)
+
+### Analytics & CRM
+- Event tracking via Amplitude with Ampli CLI standardization
+- Real-time dashboard metrics (click tracking, user engagement)
+- Braze integration for personalized messaging
+- User property sync across analytics platforms
+
+## Tech Stack
+
+### Core Framework
+- **NestJS** - Progressive Node.js framework
+- **TypeScript** - Type-safe development
+- **Express.js** - HTTP server
+
+### Data Layer
+- **PostgreSQL** - Relational data (users, workspaces, accounts)
+- **Apache Cassandra** - Time-series data (link analytics, events)
+- **Redis** - Caching and rate limiting
+
+### External Integrations
+- **Amplitude + Ampli CLI** - Event tracking and analytics
+- **Braze SDK** - CRM and messaging
+- **Resend** - Email delivery
+- **Custom Analytics Service** - Multi-platform event ingestion
+
+## Project Structure
+
+```
+src/
+├── config/              # Configuration management
+├── domain/              # Domain models and interfaces
+│   ├── repositories/    # Repository contracts
+│   └── types/          # Core domain types
+├── infrastructure/      # External services & adapters
+│   ├── cache/          # Redis integration
+│   ├── database/       # PostgreSQL & Cassandra
+│   └── external/       # Third-party services (Amplitude, Braze, etc.)
+└── modules/            # Feature modules
+    ├── auth/           # Authentication & authorization
+    ├── user/           # User management
+    ├── workspace/      # Workspace operations
+    ├── link/           # Link creation & management
+    └── redirect/       # URL redirection & tracking
 ```
 
-## Compile and run the project
+## Prerequisites
+
+- Node.js 18+
+- npm 9+
+- PostgreSQL 14+
+- Apache Cassandra 4.0+
+- Redis 7+
+
+## Getting Started
+
+### Installation
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+npm install
 ```
 
-## Run tests
+### Environment Configuration
+
+Create a `.env` file in the project root with the following variables:
+
+```env
+# Server
+PORT=3001
+NODE_ENV=development
+
+# Database - PostgreSQL
+DATABASE_URL=postgresql://user:password@localhost:5432/ezroute
+
+# Database - Cassandra
+CASSANDRA_CONTACT_POINTS=localhost
+CASSANDRA_PORT=9042
+CASSANDRA_KEYSPACE=ezroute
+
+# Cache
+REDIS_URL = redis://localhost:6379
+
+# External Services
+AMPLITUDE_API_KEY=your_amplitude_key
+AMPLITUDE_API_SECRET=your_amplitude_secret
+BRAZE_API_KEY=your_braze_key
+BRAZE_API_ENDPOINT=your_braze_endpoint
+RESEND_API_KEY=your_resend_key
+
+# JWT
+JWT_SECRET=your_jwt_secret
+JWT_EXPIRATION=3600
+```
+
+### Database Setup
 
 ```bash
-# unit tests
-$ npm run test
+# Run PostgreSQL migrations
+npm run migrate:up
 
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+# Initialize Cassandra keyspace
+npm run cassandra:init
 ```
 
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+### Running the Application
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+# Development mode with hot-reload
+npm run start:dev
+
+# Production mode
+npm run start:prod
+
+# Watch mode
+npm run start:watch
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+The API will be available at `http://localhost:3001`
 
-## Resources
+## API Documentation
 
-Check out a few resources that may come in handy when working with NestJS:
+### Interactive Documentation
+- **Swagger UI**: http://localhost:3001/api/docs
+- **OpenAPI JSON**: http://localhost:3001/api/docs-json
+- **ReDoc**: http://localhost:3001/api/redoc
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+### Core Endpoints
 
-## Support
+#### Authentication
+- `POST /auth/signup` - Register new user
+- `POST /auth/signin` - Sign in user
+- `POST /auth/password-recovery` - Request password reset
+- `POST /auth/password-reset` - Reset password with token
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+#### Users
+- `GET /users/profile` - Get current user profile
+- `PATCH /users/profile` - Update user profile
+- `POST /users/upgrade-plan` - Upgrade subscription
+- `POST /users/downgrade-plan` - Downgrade subscription
 
-## Stay in touch
+#### Workspaces
+- `POST /workspaces` - Create new workspace
+- `GET /workspaces` - List user workspaces
+- `POST /workspaces/:id/members/invite` - Invite team member
+- `GET /workspaces/:id/members` - List workspace members
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+#### Links
+- `POST /links` - Create shortened link
+- `GET /links` - List workspace links
+- `GET /links/:shortCode` - Retrieve link details
+- `PATCH /links/:id` - Update link
+- `DELETE /links/:id` - Delete link
+
+#### Analytics
+- `GET /analytics/links/:id` - Get link click statistics
+- `GET /analytics/workspace/:id` - Get workspace analytics
+
+## Testing
+
+```bash
+# Run unit tests
+npm run test
+
+# Run e2e tests
+npm run test:e2e
+
+# Generate coverage report
+npm run test:cov
+```
+
+## Analytics Integration
+
+### Amplitude Events
+
+Events are defined and managed through Amplitude using Ampli CLI. Core events tracked:
+
+**Authentication**
+- `user_signed_up` - User registration
+- `user_signed_in` - User login
+
+**Workspace**
+- `workspace_created` - New workspace created
+- `workspace_invited_user` - Member invitation sent
+
+**Plans**
+- `plan_upgraded` - Subscription upgraded
+- `plan_downgraded` - Subscription downgraded
+
+**Links**
+- `link_created` - Shortened link created
+- `link_clicked` - Link clicked (tracked redirect)
+
+For adding new events:
+```bash
+ampli pull
+# Edit events in Amplitude
+ampli push
+```
+
+### Braze Integration
+
+Users are automatically synced to Braze with:
+- **External ID**: Unique user identifier
+- **User Attributes**: plan_tier, workspace_count, created_at
+- **Custom Events**: Aligned with Amplitude event taxonomy
+
+## Performance & Scalability
+
+### Design Targets
+- **URL Generation**: 100M+ per day capacity
+- **Redirect Latency**: < 10ms p99
+- **Read/Write Ratio**: 10:1 (optimized for reads)
+- **Concurrent Users**: 100k+
+
+### Optimization Strategies
+- Redis caching layer for hot links
+- Cassandra partitioning for time-series data
+- PostgreSQL connection pooling
+- Async event processing
+- CDN ready (link redirects)
+
+## Error Handling
+
+The API uses standard HTTP status codes with detailed error responses:
+
+```json
+{
+  "statusCode": 400,
+  "message": "Email already registered",
+  "error": "BadRequestException"
+}
+```
+
+## Contributing
+
+1. Fork the repository
+2. Create feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit changes (`git commit -m 'Add amazing feature'`)
+4. Push to branch (`git push origin feature/amazing-feature`)
+5. Open Pull Request
+
+### Code Standards
+- TypeScript strict mode enabled
+- ESLint configuration enforced
+- Test coverage minimum: 80%
+- Pre-commit hooks validate code quality
 
 ## License
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+This project is proprietary.
 
-Interactive Swagger UI: http://localhost:3001/api/docs
-OpenAPI JSON: http://localhost:3001/api/docs-json
-ReDoc (alternative): http://localhost:3001/api/redoc
+## Support & Contact
+
+For issues, feature requests, or technical questions:
+- Create an issue in the repository
+- Contact the development team at contact@marcoslandi.com 
+
+## Thank You
+<img src="https://media.tenor.com/zoAy0wwDAs4AAAAi/ok-okey.gif">
