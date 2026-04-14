@@ -4,12 +4,10 @@ A high-performance, enterprise-grade URL shortening and link management platform
 
 ## Overview
 
-EZRoute is a multi-tenant SaaS platform that enables users to:
+EZRoute is a SaaS platform that enables users to:
 - Create and manage shortened URLs with custom UTM parameters
 - Organize links across multiple workspaces
 - Invite team members and manage permissions
-- Track link performance through Amplitude analytics
-- Engage users via Braze CRM integration
 - Scale to 100M+ URL generations per day with sub-millisecond latency
 
 ## Key Features
@@ -18,7 +16,7 @@ EZRoute is a multi-tenant SaaS platform that enables users to:
 - Multi-method authentication (email/password, user handle)
 - Self-service sign-up with email verification
 - Password recovery via secure email links
-- Profile management (picture, handle, credentials)
+- Profile management (email, handle, credentials)
 - Account deletion with data cleanup
 
 ### Workspace Management
