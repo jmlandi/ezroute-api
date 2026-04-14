@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { validate } from './config/environment.config';
 import { RedisModule } from './infrastructure/cache/redis/redis.module';
 import { PostgresModule } from './infrastructure/database/postgres/postgres.module';
 import { CassandraModule } from './infrastructure/database/cassandra/cassandra.module';
@@ -11,7 +12,11 @@ import { WorkspaceModule } from './modules/workspace/workspace.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot( { isGlobal: true } ),
+    ConfigModule.forRoot({ 
+      isGlobal: true,
+      validate,
+      envFilePath: ['.env.local', '.env'],
+    }),
     RedisModule,
     PostgresModule,
     CassandraModule,

@@ -15,7 +15,7 @@ export class RedirectService {
 
     if (!originalUrl) {
       // Fallback to Cassandra cluster
-      // originalUrl = await this.cassandraLinkRepository.findOriginalUrl(shortCode);
+      originalUrl = await this.cassandraLinkRepository.findByShortCode(shortCode);
       if (!originalUrl) {
         throw new NotFoundException('Linked URL no longer exists or is inactive.');
       }

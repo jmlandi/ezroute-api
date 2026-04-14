@@ -20,9 +20,16 @@ export class CassandraLinkRepository implements ILinkCassandraRepository {
   }
 
   async findByShortCode(shortCode: string): Promise<any> {
-    const query = 'SELECT * FROM ezroute.links_by_code WHERE "shortCode" = ?';
+    const query = 'SELECT "originalUrl" FROM ezroute.links_by_code WHERE "shortCode" = ?';
     const result = await this.cassandraService.client.execute(query, [shortCode], { prepare: true });
-    return result.first();
+    const row = result.first();
+    if (!row) return null;
+    const url = row.get('originalUrl');
+    // console.log('DEBUG - URL value:', url);
+    // console.log('DEBUG - URL type:', typeof url);
+    // console.log('DEBUG - URL keys:', Object.keys(url));
+    // console.log('DEBUG - URL constructor:', url?.constructor?.name);
+    return url;
   }
 
   async insertClick(click: any) {

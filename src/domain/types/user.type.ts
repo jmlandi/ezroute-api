@@ -5,7 +5,7 @@ export interface User {
   firstName:            string;
   handle:               string;
   email:                string;
-  password:             string;
+  passwordHash:         string;
   plan:                 Plan;
   newsletterSubscribed: boolean;
   profilePictureUrl:    string | undefined;

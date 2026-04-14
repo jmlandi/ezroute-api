@@ -13,7 +13,7 @@ export interface IUserRepository {
     handle: string,
     email: string,
     newsletter_sub: boolean,
-    password: string,
+    passwordHash: string,
   ): Promise<User | undefined>;
 
   update(
@@ -22,7 +22,7 @@ export interface IUserRepository {
     handle: string | null,
     email: string | null,
     newsletter_sub: boolean | null,
-    password: string | null,
+    passwordHash: string | null,
   ): Promise<User | undefined>;
 
   deleteUser(id: string): Promise<{ affectedRows: number }>;

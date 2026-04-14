@@ -1,6 +1,6 @@
 -- Tables creation
 CREATE TABLE IF NOT EXISTS "users" (
-  "id" uuid PRIMARY KEY,
+  "id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   "email" varchar UNIQUE NOT NULL,
   "handle" varchar UNIQUE NOT NULL,
   "first_name" varchar,
@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS "plans" (
 );
 
 CREATE TABLE IF NOT EXISTS "workspaces" (
-  "id" uuid PRIMARY KEY,
+  "id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   "owner_id" uuid NOT NULL,
   "name" varchar,
   "status" varchar,
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS "workspaces" (
 );
 
 CREATE TABLE IF NOT EXISTS "workspace_members" (
-  "id" uuid PRIMARY KEY,
+  "id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   "workspace_id" uuid NOT NULL,
   "user_id" uuid NOT NULL,
   "role" varchar,
@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS "workspace_members" (
 );
 
 CREATE TABLE IF NOT EXISTS "invites" (
-  "id" uuid PRIMARY KEY,
+  "id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   "workspace_id" uuid NOT NULL,
   "email" varchar NOT NULL,
   "invite_token" varchar UNIQUE NOT NULL,

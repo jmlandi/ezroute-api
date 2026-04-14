@@ -29,14 +29,14 @@ export class UserService {
     handle: string,
     email: string,
     newsletter_sub: boolean,
-    password: string,
+    passwordHash: string,
   ): Promise<User | undefined> {
     const user: User | undefined = await this.userRepository.create(
       firstName,
       handle,
       email,
       newsletter_sub,
-      password,
+      passwordHash,
     );
     if (user) return user;
     return undefined;
@@ -48,7 +48,7 @@ export class UserService {
     handle: string | null,
     email: string | null,
     newsletter_sub: boolean | null,
-    password: string | null,
+    passwordHash: string | null,
   ): Promise<User | undefined> {
     const user: User | undefined = await this.userRepository.update(
       id,
@@ -56,7 +56,7 @@ export class UserService {
       handle,
       email,
       newsletter_sub,
-      password,
+      passwordHash,
     );
     if (user) return user;
     return undefined;

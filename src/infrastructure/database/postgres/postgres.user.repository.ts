@@ -14,7 +14,7 @@ export class PostgresUserRepository implements IUserRepository {
       firstName: row.first_name,
       handle: row.handle,
       email: row.email,
-      password: row.password,
+      passwordHash: row.password_hash,
       plan: {
         tier: row.tier,
         price: row.price,
@@ -112,17 +112,17 @@ export class PostgresUserRepository implements IUserRepository {
     handle: string,
     email: string,
     newsletter_sub: boolean,
-    password: string,
+    passwordHash: string,
   ): Promise<User | undefined> {
     const sql = `
       INSERT INTO users
-        (first_name, handle, email, newsletter_subscribed, password, plan_tier, created_at, updated_at, handle_updated_at, is_deleted)
+        (id, first_name, handle, email, newsletter_subscribed, password_hash, plan_tier, created_at, updated_at, handle_updated_at, is_deleted)
       VALUES
-        ($1, $2, $3, $4, $5, 'free', NOW(), NOW(), NOW(), false)
+        (gen_random_uuid(), $1, $2, $3, $4, $5, 'free', NOW(), NOW(), NOW(), false)
       RETURNING
         *;
     `;
-    const params = [firstName, handle, email, newsletter_sub, password];
+    const params = [firstName, handle, email, newsletter_sub, passwordHash];
 
     const queryResult = await this.postgresService.query(sql, params);
     
@@ -140,7 +140,7 @@ export class PostgresUserRepository implements IUserRepository {
     handle: string | null,
     email: string | null,
     newsletter_sub: boolean | null,
-    password: string | null,
+    passwordHash: string | null,
   ): Promise<User | undefined> {
     const updates: string[] = [];
     const params: any[] = [];
@@ -167,9 +167,9 @@ export class PostgresUserRepository implements IUserRepository {
       params.push(newsletter_sub);
       paramIndex++;
     }
-    if (password !== null) {
-      updates.push(`password = $${paramIndex}`);
-      params.push(password);
+    if (passwordHash !== null) {
+      updates.push(`password_hash = $${paramIndex}`);
+      params.push(passwordHash);
       paramIndex++;
     }
 
